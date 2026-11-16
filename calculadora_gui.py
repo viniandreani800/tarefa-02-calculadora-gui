@@ -11,10 +11,36 @@ def atualizar_display(display, novo_texto):
     display.config(state="readonly")
 
 
+def tratar_erro(display, mensagem):
+    atualizar_display(display, mensagem)
+
+
+def calcular(expressao):
+    if not expressao or expressao[-1] in OPERADORES:
+        raise ValueError("Expressão incompleta")
+
+    # Validação de caracteres permitidos antes de avaliar
+    caracteres_validos = set("0123456789.+-*/")
+    if any(ch not in caracteres_validos for ch in expressao):
+        raise ValueError("Caracteres inválidos")
+
+    try:
+        resultado = eval(expressao)
+    except ZeroDivisionError:
+        raise ZeroDivisionError("Divisão por zero")
+    except Exception:
+        raise ValueError("Expressão inválida")
+
+    # Formata para remover '.0' desnecessário em resultados inteiros
+    if isinstance(resultado, float) and resultado.is_integer():
+        return str(int(resultado))
+
+    return str(round(resultado, 10))
+
+
 def ao_clicar_botao(display, texto):
     atual = display.get()
 
-    # Se houver mensagem de erro na tela, limpa antes de digitar novamente
     if atual.startswith("Erro:"):
         atual = ""
 
@@ -27,26 +53,29 @@ def ao_clicar_botao(display, texto):
         return
 
     if texto == "=":
-        # A lógica de cálculo será implementada no próximo commit
+        if not atual:
+            return
+        try:
+            resultado = calcular(atual)
+            atualizar_display(display, resultado)
+        except ZeroDivisionError:
+            tratar_erro(display, "Erro: Divisão por zero")
+        except ValueError:
+            tratar_erro(display, "Erro: Expressão inválida")
         return
 
-    # Evita display overflow
     if len(atual) >= MAX_CARACTERES:
         return
 
-    # Validação de múltiplos operadores seguidos
     if texto in OPERADORES:
         if not atual:
-            # Permite começar apenas com sinal negativo
             if texto == "-":
                 atualizar_display(display, texto)
             return
         if atual[-1] in OPERADORES:
-            # Substitui o operador anterior pelo novo
             atualizar_display(display, atual[:-1] + texto)
             return
 
-    # Validação de múltiplos pontos decimais no mesmo número
     if texto == ".":
         partes = atual.replace("+", " ").replace("-", " ").replace("*", " ").replace("/", " ").split()
         ultimo_numero = partes[-1] if partes else ""
@@ -65,7 +94,7 @@ def criar_layout(janela):
 
     display = tk.Entry(
         janela,
-        font=("Arial", 24, "bold"),
+        font=("Arial", 22, "bold"),
         bg="#2d2d2d",
         fg="#ffffff",
         bd=0,
