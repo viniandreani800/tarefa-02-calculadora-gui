@@ -1,6 +1,7 @@
 # Calculadora com Interface Gráfica (INE5201)
 
 **Disciplina:** INE5201 / UFSC
+
 **Aluno:** Vinicius Andreani
 
 ## Funcionalidades
