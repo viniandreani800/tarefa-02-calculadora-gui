@@ -1,10 +1,17 @@
 import tkinter as tk
 
 MAX_CARACTERES = 18
+MAX_HISTORICO = 5
 OPERADORES = {"+", "-", "*", "/"}
 
 
 def atualizar_display(display, novo_texto):
+    # Ajusta o tamanho da fonte se for uma mensagem de erro longa
+    if novo_texto.startswith("Erro:"):
+        display.config(font=("Arial", 16, "bold"))
+    else:
+        display.config(font=("Arial", 22, "bold"))
+
     display.config(state="normal")
     display.delete(0, tk.END)
     display.insert(0, novo_texto)
@@ -15,11 +22,23 @@ def tratar_erro(display, mensagem):
     atualizar_display(display, mensagem)
 
 
+def adicionar_ao_historico(lista_historico, expressao, resultado):
+    item = f"{expressao} = {resultado}"
+    lista_historico.insert(0, item)
+
+    # Mantém os cálculos mais recentes visíveis (mínimo 5 exigidos)
+    if lista_historico.size() > 10:
+        lista_historico.delete(10, tk.END)
+
+
+def limpar_historico(lista_historico):
+    lista_historico.delete(0, tk.END)
+
+
 def calcular(expressao):
     if not expressao or expressao[-1] in OPERADORES:
         raise ValueError("Expressão incompleta")
 
-    # Validação de caracteres permitidos antes de avaliar
     caracteres_validos = set("0123456789.+-*/")
     if any(ch not in caracteres_validos for ch in expressao):
         raise ValueError("Caracteres inválidos")
@@ -31,14 +50,13 @@ def calcular(expressao):
     except Exception:
         raise ValueError("Expressão inválida")
 
-    # Formata para remover '.0' desnecessário em resultados inteiros
     if isinstance(resultado, float) and resultado.is_integer():
         return str(int(resultado))
 
     return str(round(resultado, 10))
 
 
-def ao_clicar_botao(display, texto):
+def ao_clicar_botao(display, lista_historico, texto):
     atual = display.get()
 
     if atual.startswith("Erro:"):
@@ -57,6 +75,7 @@ def ao_clicar_botao(display, texto):
             return
         try:
             resultado = calcular(atual)
+            adicionar_ao_historico(lista_historico, atual, resultado)
             atualizar_display(display, resultado)
         except ZeroDivisionError:
             tratar_erro(display, "Erro: Divisão por zero")
@@ -92,8 +111,12 @@ def criar_layout(janela):
     janela.resizable(False, False)
     janela.configure(bg="#1e1e1e")
 
+    # Frame esquerdo: Calculadora
+    frame_calc = tk.Frame(janela, bg="#1e1e1e")
+    frame_calc.grid(row=0, column=0, padx=10, pady=10)
+
     display = tk.Entry(
-        janela,
+        frame_calc,
         font=("Arial", 22, "bold"),
         bg="#2d2d2d",
         fg="#ffffff",
@@ -102,7 +125,47 @@ def criar_layout(janela):
         state="readonly",
         readonlybackground="#2d2d2d",
     )
-    display.grid(row=0, column=0, columnspan=4, padx=10, pady=(15, 10), ipady=15, sticky="nsew")
+    display.grid(row=0, column=0, columnspan=4, padx=4, pady=(5, 10), ipady=15, sticky="nsew")
+
+    # Frame direito: Histórico de Cálculos
+    frame_hist = tk.Frame(janela, bg="#252526", padx=10, pady=10)
+    frame_hist.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="nsew")
+
+    lbl_hist = tk.Label(
+        frame_hist,
+        text="Histórico Recente",
+        font=("Arial", 12, "bold"),
+        bg="#252526",
+        fg="#ffffff",
+    )
+    lbl_hist.pack(pady=(0, 8))
+
+    lista_historico = tk.Listbox(
+        frame_hist,
+        font=("Arial", 11),
+        bg="#2d2d2d",
+        fg="#e0e0e0",
+        bd=0,
+        width=22,
+        height=12,
+        highlightthickness=0,
+        selectbackground="#3b3b3b",
+    )
+    lista_historico.pack(fill="both", expand=True, pady=(0, 8))
+
+    btn_limpar_hist = tk.Button(
+        frame_hist,
+        text="Limpar Histórico",
+        font=("Arial", 10, "bold"),
+        bg="#a5a5a5",
+        fg="#ffffff",
+        bd=0,
+        pady=6,
+        activebackground="#777777",
+        activeforeground="#ffffff",
+        command=lambda: limpar_historico(lista_historico),
+    )
+    btn_limpar_hist.pack(fill="x")
 
     botoes = [
         ("C", 1, 0), ("⌫", 1, 1), ("/", 1, 3),
@@ -122,7 +185,7 @@ def criar_layout(janela):
             cor_fundo = "#28a745"
 
         btn = tk.Button(
-            janela,
+            frame_calc,
             text=texto,
             font=("Arial", 16, "bold"),
             bg=cor_fundo,
@@ -132,13 +195,13 @@ def criar_layout(janela):
             height=2,
             activebackground="#555555",
             activeforeground="#ffffff",
-            command=lambda t=texto: ao_clicar_botao(display, t),
+            command=lambda t=texto: ao_clicar_botao(display, lista_historico, t),
         )
 
         colspan = 2 if texto == "=" else 1
         btn.grid(row=linha, column=coluna, columnspan=colspan, padx=4, pady=4, sticky="nsew")
 
-    return display
+    return display, lista_historico
 
 
 def main():
