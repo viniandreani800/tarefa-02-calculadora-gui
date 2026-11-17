@@ -21,4 +21,4 @@
 1. Certifique-se de ter o **Python 3** instalado (a biblioteca `tkinter` já acompanha a instalação padrão).
 2. Clone este repositório:
    ```bash
-   git clone [https://github.com/viniandreani800/tarefa-02-calculadora-gui.git](https://github.com/viniandreani800/tarefa-02-calculadora-gui.git)
+   python calculadora_gui.py
