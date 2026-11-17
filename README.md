@@ -1,6 +1,7 @@
 # Calculadora com Interface Gráfica (INE5201)
 
-Projeto desenvolvido para a **Tarefa 02** da disciplina **INE5201 - Introdução à Ciência da Computação com Python** da Universidade Federal de Santa Catarina (UFSC), ministrada pelo Prof. Rafael Novo da Rosa.
+**Disciplina:** INE5201 / UFSC
+**Aluno:** Vinicius Andreani
 
 ## Funcionalidades
 
