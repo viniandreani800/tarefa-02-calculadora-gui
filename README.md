@@ -19,4 +19,4 @@ Projeto desenvolvido para a **Tarefa 02** da disciplina **INE5201 - Introdução
 1. Certifique-se de ter o **Python 3** instalado (a biblioteca `tkinter` já acompanha a instalação padrão).
 2. Clone este repositório:
    ```bash
-   git clone [https://github.com/viniandreani800/tarefa-02-calculadora-gui.git](https://github.com/viniandreani800/tarefa-02-calculadora-gui.git)# tarefa-02-calculadora-gui
+   git clone [https://github.com/viniandreani800/tarefa-02-calculadora-gui.git](https://github.com/viniandreani800/tarefa-02-calculadora-gui.git)
