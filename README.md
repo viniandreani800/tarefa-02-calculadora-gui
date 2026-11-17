@@ -1,1 +1,22 @@
-# tarefa-02-calculadora-gui
+# Calculadora com Interface Gráfica (INE5201)
+
+Projeto desenvolvido para a **Tarefa 02** da disciplina **INE5201 - Introdução à Ciência da Computação com Python** da Universidade Federal de Santa Catarina (UFSC), ministrada pelo Prof. Rafael Novo da Rosa.
+
+## Funcionalidades
+
+- **Operações Básicas**: Adição (`+`), subtração (`-`), multiplicação (`*`) e divisão (`/`).
+- **Suporte a Decimais**: Controle de ponto decimal (`.`) impedindo múltiplos pontos no mesmo número.
+- **Controles de Edição**: Botão `C` para limpar todo o display e botão `⌫` (backspace) para apagar o último caractere.
+- **Histórico de Cálculos**: Painel lateral exibindo os cálculos recentes (mínimo de 5 registros) com botão dedicado para limpar o histórico.
+- **Tratamento de Erros e Validações**:
+  - Exibição de `"Erro: Divisão por zero"` ao tentar dividir por zero.
+  - Exibição de `"Erro: Expressão inválida"` para expressões incompletas ou malformadas.
+  - Bloqueio de múltiplos operadores consecutivos.
+  - Limite máximo de caracteres no display para evitar *overflow*.
+
+## Como Executar
+
+1. Certifique-se de ter o **Python 3** instalado (a biblioteca `tkinter` já acompanha a instalação padrão).
+2. Clone este repositório:
+   ```bash
+   git clone [https://github.com/viniandreani800/tarefa-02-calculadora-gui.git](https://github.com/viniandreani800/tarefa-02-calculadora-gui.git)# tarefa-02-calculadora-gui
